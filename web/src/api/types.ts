@@ -108,6 +108,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/runs/{run_id}/code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Run Code
+         * @description File tree of generated code per claim and iteration (server-enumerated).
+         */
+        get: operations["get_run_code_api_runs__run_id__code_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/runs/{run_id}/code/{claim_id}/{iteration}/{file_index}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Run Code File
+         * @description File content from the server-enumerated code tree.
+         *
+         *     Files resolve only from the enumeration above, never from a raw
+         *     path, so ``..`` segments and unknown names return 404.
+         */
+        get: operations["get_run_code_file_api_runs__run_id__code__claim_id___iteration___file_index__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/runs/{run_id}/code.zip": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Run Code Zip
+         * @description Download all generated code as a zip archive.
+         *
+         *     Entries come only from the server-side enumeration above
+         *     (``<claim_id>/iter_<n>/<name>``), never from user input, so
+         *     crafted paths cannot escape the run directory. Returns 404 when
+         *     the run has no generated code yet.
+         */
+        get: operations["get_run_code_zip_api_runs__run_id__code_zip_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/runs/{run_id}/{artifact}": {
         parameters: {
             query?: never;
@@ -156,6 +224,57 @@ export interface components {
         Body_create_run_api_runs_post: {
             /** File */
             file: string;
+        };
+        /**
+         * CodeClaim
+         * @description Generated code for one claim across iterations.
+         */
+        CodeClaim: {
+            /** Claim Id */
+            claim_id: string;
+            /**
+             * Iterations
+             * @default []
+             */
+            iterations: components["schemas"]["CodeIteration"][];
+        };
+        /**
+         * CodeFile
+         * @description One generated code file, addressed by server-assigned index.
+         */
+        CodeFile: {
+            /** Index */
+            index: number;
+            /** Name */
+            name: string;
+            /** Size */
+            size: number;
+        };
+        /**
+         * CodeIteration
+         * @description One saved iteration of a claim's generated code.
+         */
+        CodeIteration: {
+            /** Iteration */
+            iteration: number;
+            /**
+             * Files
+             * @default []
+             */
+            files: components["schemas"]["CodeFile"][];
+        };
+        /**
+         * CodeTree
+         * @description File tree of generated code, enumerated by the server.
+         */
+        CodeTree: {
+            /** Run Id */
+            run_id: string;
+            /**
+             * Claims
+             * @default []
+             */
+            claims: components["schemas"]["CodeClaim"][];
         };
         /**
          * ConfigInfo
@@ -433,6 +552,102 @@ export interface operations {
         };
     };
     stream_run_events_api_runs__run_id__events_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_run_code_api_runs__run_id__code_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeTree"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_run_code_file_api_runs__run_id__code__claim_id___iteration___file_index__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+                claim_id: string;
+                iteration: number;
+                file_index: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_run_code_zip_api_runs__run_id__code_zip_get: {
         parameters: {
             query?: never;
             header?: never;
